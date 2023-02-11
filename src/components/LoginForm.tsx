@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { Input } from './common/index';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import firebase from '@react-native-firebase/auth';
+
 
 export class LoginForm extends Component {
 
@@ -19,11 +18,21 @@ constructor(props) {
 onButtonClicked(){
   const { email, password } = this.state;
 
-  firebase.auth().signInWithEmailAndPassword(email,password)
-  .catch(() => {
+  // auth().signInWithEmailAndPassword(email,password)
+  // .catch(() => {
+    
+  // })
 
-  })
-
+  firebase.auth().signInAnonymously()
+  .then(() => {
+    Alert.alert('User signed in anonymously');
+  }) 
+  .catch(error => {
+    if (error.code === 'auth/operation-not-allowed') {
+      Alert.alert('Enable anonymous in your firebase console.');
+    }
+    console.error(error);
+  });
 }
 
   render() {

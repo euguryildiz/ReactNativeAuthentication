@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { initializeApp } from 'firebase/app';
+import firebase from '@react-native-firebase/app';
 import Banner from './components/Banner';
 import LoginForm from './components/LoginForm';
 
@@ -13,11 +13,18 @@ class App extends Component {
       projectId: "authentication-53d24",
       storageBucket: "authentication-53d24.appspot.com",
       messagingSenderId: "55690661923",
-      appId: "1:55690661923:web:841cd2e36528ff0223e196",
-      measurementId: "G-ZNQH5JVFT2"
-    };
+      appId: "1:55690661923:web:50514e95e14b2c8123e196",
+      measurementId: "G-Z0LXQDMESC",
+      databaseURL: 'https://authentication-53d24-default-rtdb.firebaseio.com/',
+    }
     
-    const app = initializeApp(firebaseConfig);
+    ;
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+   }else {
+      firebase.app(); // if already initialized, use that one
+   }
+   
   }
 
   render() {

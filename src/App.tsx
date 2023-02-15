@@ -1,10 +1,22 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import firebase from '@react-native-firebase/app';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import Banner from './components/Banner';
 import LoginForm from './components/LoginForm';
+import { firebase } from '@react-native-firebase/auth';
+import { Spinner } from './components/common/index';
 
 class App extends Component {
+
+  constructor(props){
+    super(props);
+    
+    this.state ={
+    loggedIn: null
+    };
+
+    this.renderContent = this.renderContent.bind(this);
+  }
+
 
   componentDidMount(){
     const firebaseConfig = {
@@ -16,22 +28,52 @@ class App extends Component {
       appId: "1:55690661923:web:50514e95e14b2c8123e196",
       measurementId: "G-Z0LXQDMESC",
       databaseURL: 'https://authentication-53d24-default-rtdb.firebaseio.com/',
-    }
+    };
+
     
-    ;
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
-   }else {
-      firebase.app(); // if already initialized, use that one
-   }
-   
+    }else {
+        firebase.app(); // if already initialized, use that one
+    }
+
+    firebase.auth().onAuthStateChanged((user) => {
+      const loggedIn = user ? true : false;
+      this.setState({
+        loggedIn: loggedIn
+      })
+    });
+  }
+
+
+  renderContent (){
+    const {loggedIn} =  this.state;
+
+    switch(loggedIn) {
+      
+      case true: 
+      return (
+        <Button onPress={firebase.auth().signOut()} color='#E87B79' title='Logout' />
+      )
+      case false:
+        return (
+          <LoginForm />
+        )
+      default: {
+        return (
+          <Spinner />
+        )
+      }
+    }
+
+
   }
 
   render() {
     return (
       <View style={styles.appContainer}>
         <Banner text='Authentication' />
-        <LoginForm />
+        {this.renderContent()}
       </View>
     )
   }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { Input } from './common/index';
+import { Spinner } from './common/index';
 import { firebase } from '@react-native-firebase/auth';
 
 export class LoginForm extends Component {
@@ -10,7 +11,8 @@ constructor(props) {
   this.state = {
     email: 'tst@gmail.com',
     password: 'test123',
-    error: ''
+    error: '',
+    loading: false
   };
 
 }
@@ -18,21 +20,28 @@ constructor(props) {
 onButtonClicked(){
   const { email, password } = this.state;
   this.setState({
-    error: ''
+    error: '',
+    loading: true
   })
 
   firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password)
   .then((loggedInUser) =>{
     console.log(loggedInUser);
   }).catch((err) => {
-    console.error(err.toString());
-    this.setState({
-      error: error
-    });
+    // console.error(err["message"]);
+    // this.setState({
+    //   error: err["message"],
+    // });
     firebase.auth().createUserWithEmailAndPassword(email,password)
-    .catch((error) => {
+    .then((loggedInUser) =>{
+      console.log(loggedInUser);
       this.setState({
-        error: error.toString()
+        loading: false
+      })
+    }).catch((error) => {
+      this.setState({
+        error: error["message"],
+        loading: false
       });
     })
   });
@@ -57,13 +66,20 @@ onButtonClicked(){
 }
 
   render() {
-    const { error } = this.state;
+    const { error, loading } = this.state;
     const errorMsg = error ? (
       <Text style={styles.errorMsg}>
         {error}
       </Text>
     ) :
     null;
+
+
+    const loginButton = loading ? (
+      <Spinner />
+    ) : (
+      <Button onPress={this.onButtonClicked.bind(this)} color='#E87B79' title='Login' />
+    )
 
     return (
       <View style={{ padding: 30 }}>
@@ -88,7 +104,7 @@ onButtonClicked(){
         </View>
         {errorMsg}
         <View style={styles.buttonWrapper}>
-            <Button onPress={this.onButtonClicked.bind(this)} color='#E87B79' title='Login' />
+            {loginButton}
         </View>
       </View>
     )

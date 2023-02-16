@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Banner from './components/Banner';
 import LoginForm from './components/LoginForm';
 import { firebase } from '@react-native-firebase/auth';
-import { Spinner } from './components/common/index';
+import {Spinner, MyButton } from './components/common/index';
 
 class App extends Component {
 
@@ -39,6 +39,7 @@ class App extends Component {
 
     firebase.auth().onAuthStateChanged((user) => {
       const loggedIn = user ? true : false;
+      console.log(loggedIn);
       this.setState({
         loggedIn: loggedIn
       })
@@ -53,7 +54,10 @@ class App extends Component {
       
       case true: 
       return (
-        <Button onPress={firebase.auth().signOut()} color='#E87B79' title='Logout' />
+        <MyButton spinner={false} 
+          title='Logout' 
+          onPress={() => firebase.auth().signOut()} 
+          color='#E87B79'/>
       )
       case false:
         return (

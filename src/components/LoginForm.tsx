@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Button, Alert } from 'react-native';
-import { Input } from './common/index';
-import { Spinner } from './common/index';
+import { Text, View, StyleSheet } from 'react-native';
+import { Input, MyButton } from './common/index';
 import { firebase } from '@react-native-firebase/auth';
 
 export class LoginForm extends Component {
@@ -9,7 +8,7 @@ export class LoginForm extends Component {
 constructor(props) {
   super(props);
   this.state = {
-    email: 'tst@gmail.com',
+    email: 'yldz2534@gmail.com',
     password: 'test123',
     error: '',
     loading: false
@@ -25,43 +24,16 @@ onButtonClicked(){
   })
 
   firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password)
-  .then((loggedInUser) =>{
-    console.log(loggedInUser);
-  }).catch((err) => {
-    // console.error(err["message"]);
-    // this.setState({
-    //   error: err["message"],
-    // });
+  .catch((err) => {
+    console.log(err["message"]);
     firebase.auth().createUserWithEmailAndPassword(email,password)
-    .then((loggedInUser) =>{
-      console.log(loggedInUser);
-      this.setState({
-        loading: false
-      })
-    }).catch((error) => {
+    .catch((error) => {
       this.setState({
         error: error["message"],
         loading: false
       });
     })
   });
-
-
-
-  // firebase.auth().signInWithEmailAndPassword(email,password)
-  // .catch((err) => {
-  //   debugger;
-  //   this.setState({
-  //     error: err
-  //   });
-  //   firebase.auth().createUserWithEmailAndPassword(email,password)
-  //   .catch((error) => {
-  //     debugger;
-  //     this.setState({
-  //       error: error
-  //     });
-  //   })
-  // });
 
 }
 
@@ -73,13 +45,6 @@ onButtonClicked(){
       </Text>
     ) :
     null;
-
-
-    const loginButton = loading ? (
-      <Spinner />
-    ) : (
-      <Button onPress={this.onButtonClicked.bind(this)} color='#E87B79' title='Login' />
-    )
 
     return (
       <View style={{ padding: 30 }}>
@@ -103,23 +68,16 @@ onButtonClicked(){
         value={this.state.password} />
         </View>
         {errorMsg}
-        <View style={styles.buttonWrapper}>
-            {loginButton}
-        </View>
+        <MyButton spinner={loading} 
+          title='Login' 
+          onPress={this.onButtonClicked.bind(this)} 
+          color='#E87B79'/>
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  buttonWrapper: {
-    marginTop: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    height: 49,
-    justifyContent: 'center',
-    fontSize: 17,
-  },
   errorMsg: {
     color: 'red',
     fontSize: 20,
